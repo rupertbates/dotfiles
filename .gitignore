@@ -1,0 +1,6 @@
+# Machine-specific, uncommitted overrides
+.gitconfig.local
+.zshrc.local
+
+# OS cruft
+.DS_Store

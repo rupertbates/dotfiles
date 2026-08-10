@@ -1,0 +1,41 @@
+# Portable, committed git config.
+# Machine-specific settings (GPG signing key, macOS credential helper, IntelliJ
+# merge/diff tool paths) live in ~/.gitconfig.local, which is git-ignored and
+# included at the bottom of this file.
+
+[user]
+	name = Rupert Bates
+	email = Rupert.Bates@guardian.co.uk
+[github]
+	user = rupertbates
+[push]
+	default = simple
+[pull]
+	rebase = true
+[init]
+	defaultBranch = main
+[rerere]
+	enabled = true
+[mergetool]
+	keepBackup = false
+[alias]
+	co = checkout
+	s = stash
+	sa = stash apply
+	lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'
+
+# Machine-specific overrides. Create ~/.gitconfig.local per machine, e.g.:
+#   [user]
+#       signingkey = 5396A97648B7D8AE
+#   [commit]
+#       gpgsign = true
+#   [credential]
+#       helper = osxkeychain        # macOS only
+#   [core]
+#       editor = code --wait
+#       excludesfile = ~/.gitignore_global
+#   [merge]
+#       tool = intellij
+#   ...IDE merge/diff tool cmd paths...
+[include]
+	path = ~/.gitconfig.local
