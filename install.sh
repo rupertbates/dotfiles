@@ -23,6 +23,25 @@ fi
 
 link "$DOTFILES/zsh/.zshrc" "$HOME/.zshrc"
 
+# Shared aliases/env, sourced by both zsh and bash from a stable location
+# (works whether the repo is cloned to ~/dotfiles in the container or elsewhere
+# locally).
+link "$DOTFILES/shell/aliases.sh" "$HOME/.aliases.sh"
+
+# The devcontainer's default shell is bash, and tooling (e.g. devenv's mise
+# setup) appends to ~/.bashrc. So DON'T symlink .bashrc — instead idempotently
+# append a line that sources the shared aliases, preserving anything already
+# there.
+BASHRC="$HOME/.bashrc"
+SOURCE_LINE='[ -f "$HOME/.aliases.sh" ] && source "$HOME/.aliases.sh"  # dotfiles'
+touch "$BASHRC"
+if ! grep -qF '.aliases.sh' "$BASHRC"; then
+  printf '\n%s\n' "$SOURCE_LINE" >> "$BASHRC"
+  echo "appended shared aliases source to $BASHRC"
+else
+  echo "$BASHRC already sources shared aliases"
+fi
+
 # Make zsh the default login shell for this user (best-effort; often blocked in containers)
 if command -v zsh >/dev/null 2>&1; then
   ZSH_PATH="$(command -v zsh)"
