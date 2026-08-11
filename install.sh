@@ -12,15 +12,9 @@ link() {
   echo "linked $dest -> $src"
 }
 
-# --- zsh ---------------------------------------------------------------------
-# Ensure zsh is available (devcontainer images are Debian-based and default to bash)
-if ! command -v zsh >/dev/null 2>&1; then
-  echo "zsh not found; attempting to install..."
-  if command -v apt-get >/dev/null 2>&1; then
-    sudo apt-get update -qq && sudo apt-get install -y -qq zsh || echo "WARN: could not install zsh"
-  fi
-fi
-
+# --- shell -------------------------------------------------------------------
+# Symlink zsh config (used on the local machine; harmless in the bash-based
+# devcontainer where it simply goes unused).
 link "$DOTFILES/zsh/.zshrc" "$HOME/.zshrc"
 
 # Shared aliases/env, sourced by both zsh and bash from a stable location
@@ -40,16 +34,6 @@ if ! grep -qF '.aliases.sh' "$BASHRC"; then
   echo "appended shared aliases source to $BASHRC"
 else
   echo "$BASHRC already sources shared aliases"
-fi
-
-# Make zsh the default login shell for this user (best-effort; often blocked in containers)
-if command -v zsh >/dev/null 2>&1; then
-  ZSH_PATH="$(command -v zsh)"
-  if [ "${SHELL:-}" != "$ZSH_PATH" ]; then
-    sudo chsh -s "$ZSH_PATH" "$(whoami)" 2>/dev/null \
-      || chsh -s "$ZSH_PATH" 2>/dev/null \
-      || echo "NOTE: could not change default shell; set the terminal profile in your IDE, or 'exec zsh' from bash."
-  fi
 fi
 
 # --- git ---------------------------------------------------------------------

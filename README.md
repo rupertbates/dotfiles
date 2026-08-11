@@ -6,11 +6,18 @@ shell (and git) experience is identical in both.
 
 ## Overview
 
-| Path            | Purpose                                                            |
-|-----------------|-------------------------------------------------------------------|
-| `install.sh`    | Symlinks configs into `$HOME`; installs zsh in the container       |
-| `zsh/.zshrc`    | Portable zsh config (Mac-only bits are guarded so they no-op)      |
-| `git/.gitconfig`| Portable git config; machine bits go in `~/.gitconfig.local`       |
+| Path              | Purpose                                                            |
+|-------------------|-------------------------------------------------------------------|
+| `install.sh`      | Symlinks configs into `$HOME`; wires shared aliases into bash      |
+| `zsh/.zshrc`      | Portable zsh config (Mac-only bits are guarded so they no-op)      |
+| `shell/aliases.sh`| Aliases + portable env, sourced by both zsh and bash              |
+| `git/.gitconfig`  | Portable git config; machine bits go in `~/.gitconfig.local`       |
+
+The devcontainer's default shell is **bash** (both `devsh.sh` and the IntelliJ
+terminal launch bash), so aliases live in `shell/aliases.sh` and are sourced by
+both shells: directly from `~/.zshrc`, and via a line `install.sh` appends to
+`~/.bashrc`. This keeps the alias/env experience identical in the container
+(bash) and locally (zsh).
 
 Anything machine-specific (GPG signing key, macOS keychain credential helper,
 IntelliJ/VS Code merge & diff tool paths, extra secrets) is **not** committed.
@@ -59,10 +66,12 @@ shellcheck install.sh   # if shellcheck is installed
 bash -n install.sh      # syntax check
 ```
 
-In a devcontainer, open a fresh terminal after container creation and confirm:
+In a devcontainer, open a fresh terminal after container creation and confirm
+the shared aliases and git config are loaded (the shell there is bash):
 
 ```bash
-echo "$SHELL"           # should point at zsh (or run 'exec zsh')
+type g                  # should show: g is aliased to `git'
+echo "$AWS_PROFILE"      # from shell/aliases.sh
 git config --list       # aliases/user present
 ```
 
