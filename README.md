@@ -6,12 +6,14 @@ shell (and git) experience is identical in both.
 
 ## Overview
 
-| Path              | Purpose                                                            |
-|-------------------|-------------------------------------------------------------------|
-| `install.sh`      | Symlinks configs into `$HOME`; wires shared aliases into bash      |
-| `zsh/.zshrc`      | Portable zsh config (Mac-only bits are guarded so they no-op)      |
-| `shell/aliases.sh`| Aliases + portable env, sourced by both zsh and bash              |
-| `git/.gitconfig`  | Portable git config; machine bits go in `~/.gitconfig.local`       |
+| Path                     | Purpose                                                            |
+|--------------------------|--------------------------------------------------------------------|
+| `install.sh`             | Symlinks configs into `$HOME`; wires shared aliases into bash       |
+| `zsh/.zshrc`             | Portable zsh config (Mac-only bits are guarded so they no-op)      |
+| `shell/aliases.sh`       | Aliases + portable env, sourced by both zsh and bash              |
+| `git/.gitconfig`         | Portable git config; machine bits go in `~/.gitconfig.local`       |
+| `ssh/github_known_hosts` | GitHub's verified host keys, merged into `~/.ssh/known_hosts`       |
+| `examples/devenv.yaml` | Reference copy of my host-side devenv user config (backup/template) |
 
 The devcontainer's default shell is **bash** (both `devsh.sh` and the IntelliJ
 terminal launch bash), so aliases live in `shell/aliases.sh` and are sourced by
@@ -45,6 +47,17 @@ plugins:
 
 devenv clones this repo into the container at `targetPath` and runs
 `installCommand` after the project/container setup completes.
+
+A reference copy of my full user config lives at
+[`examples/devenv.yaml`](examples/devenv.yaml). devenv does **not** read it from
+there — it reads `~/.config/devenv/devenv.yaml` on the host before any container
+exists — so the copy is only a backup/template. On a new machine, restore it
+with:
+
+```bash
+mkdir -p ~/.config/devenv
+cp examples/devenv.yaml ~/.config/devenv/devenv.yaml
+```
 
 IDE **settings/keymaps/themes** are not handled here — use VS Code
 **Settings Sync** and JetBrains **Settings Sync** instead. IDE **plugins** are

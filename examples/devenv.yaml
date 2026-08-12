@@ -1,0 +1,89 @@
+# Reference copy of my personal devenv user config.
+#
+# This file is NOT read from here by devenv. devenv reads it from
+# ~/.config/devenv/devenv.yaml on the HOST before any container exists,
+# so this copy is kept only as a backup/template — copy it into place on
+# a new machine:
+#
+#   mkdir -p ~/.config/devenv
+#   cp examples/devenv.yaml ~/.config/devenv/devenv.yaml
+#
+# See: https://github.com/guardian/devenv
+# Merged with each project's .devcontainer/devenv.yaml to build the
+# .devcontainer/user/devcontainer.json for your personalised container.
+# After editing, run `devenv generate` in the project, then rebuild the container.
+
+dotfiles:
+  repository: "https://github.com/rupertbates/dotfiles"
+  targetPath: "~/dotfiles"
+  installCommand: "./install.sh"
+
+plugins:
+  vscode:
+    # --- General editing / formatting ---
+    - editorconfig.editorconfig
+    - esbenp.prettier-vscode
+    - dbaeumer.vscode-eslint
+    - streetsidesoftware.code-spell-checker
+    - k--kato.intellij-idea-keybindings
+    - robertjones.caseformatter
+    - narsenico.vscode-progressive-increment
+    - dlech.chmod
+
+    # --- TypeScript / JS ---
+    - yoavbls.pretty-ts-errors
+    - orta.vscode-twoslash-queries
+    - styled-components.vscode-styled-components
+    - firsttris.vscode-jest-runner
+    - vespa-dev-works.jestrunit
+    - wanfu.jump-to-alias-file
+
+    # --- Python ---
+    - ms-python.python
+    - ms-python.vscode-pylance
+    - ms-python.debugpy
+    - ms-python.vscode-python-envs
+
+    # --- Data / JSON / CSV / SQL ---
+    - alexcvzz.vscode-sqlite
+    - qwtel.sqlite-viewer
+    - mechatroner.rainbow-csv
+    - janisdd.vscode-edit-csv
+    - f-velka.csv-diff-pretty-print
+    - andyyaldoo.vscode-json
+    - eriklynd.json-tools
+    - nextfaze.json-parse-stringify
+    - petli-full.json-to-yaml-and-more
+    - dandric.vscode-jq
+    - redhat.vscode-xml
+
+    # --- Markdown / diagrams / docs ---
+    - bierner.markdown-mermaid
+    - terrastruct.d2
+    - systemticks.c4-dsl-extension
+    - james-yu.latex-workshop
+
+    # --- Diff / misc utilities ---
+    - fabiospampinato.vscode-diff
+    - flesler.url-encode
+    - github.vscode-github-actions
+    - ms-vsliveshare.vsliveshare
+
+  # IntelliJ plugin IDs (from the JetBrains Marketplace URL, e.g.
+  # plugins.jetbrains.com/plugin/164-ideavim -> "IdeaVIM"). Add your own:
+  intellij:
+    - de.netnexus.camelcaseplugin   # CamelCase
+
+  # NOTE: deliberately NOT included above:
+  #  VS Code:
+  #   - ms-vscode-remote.remote-containers : host-only extension that launches
+  #     devcontainers; must not run inside the container.
+  #   - scala-lang.scala / scalameta.metals : already installed by the project's
+  #     `scala` devenv module, so listing them here would be redundant.
+  #  IntelliJ:
+  #   - org.intellij.scala (Scala) : provided by the `scala` devenv module.
+  #   - com.github.copilot (GitHub Copilot) : provided by the `github-copilot`
+  #     module in the project config.
+  #   - All other IntelliJ plugins you have locally (Spring, JPA, JavaEE, Docker,
+  #     Kubernetes, JavaScript, Prettier, etc.) are BUNDLED with IntelliJ
+  #     Ultimate and install automatically — they don't need listing here.

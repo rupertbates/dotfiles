@@ -36,6 +36,22 @@ else
   echo "$BASHRC already sources shared aliases"
 fi
 
+# --- ssh ---------------------------------------------------------------------
+# Pre-seed GitHub's host keys so `git push`/`git pull` over SSH don't prompt
+# "The authenticity of host 'github.com' can't be established" on a fresh
+# container. These keys are GitHub's official published keys (fingerprints
+# verified, NOT trust-on-first-use). Merged idempotently into known_hosts.
+mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+KNOWN_HOSTS="$HOME/.ssh/known_hosts"
+touch "$KNOWN_HOSTS" && chmod 644 "$KNOWN_HOSTS"
+while IFS= read -r key_line; do
+  [ -z "$key_line" ] && continue
+  if ! grep -qF "$key_line" "$KNOWN_HOSTS"; then
+    printf '%s\n' "$key_line" >> "$KNOWN_HOSTS"
+    echo "added GitHub host key to $KNOWN_HOSTS"
+  fi
+done < "$DOTFILES/ssh/github_known_hosts"
+
 # --- git ---------------------------------------------------------------------
 # Shared, portable git config. Machine-specific bits (signing key, macOS
 # credential helper, IDE merge/diff tools) live in ~/.gitconfig.local, which is
