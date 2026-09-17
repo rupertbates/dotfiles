@@ -18,11 +18,17 @@ export SBT_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G"
 # /tmp for a forwarded socket that actually holds a key and use it.
 # `ssh-add -l` exits 0 only when an agent is reachable AND has identities, so a
 # working setup skips the scan entirely.
-if command -v ssh-add >/dev/null 2>&1 && ! ssh-add -l >/dev/null 2>&1; then
+#
+# Only do this in the Linux devcontainer and only when no agent socket is set.
+# On macOS SSH_AUTH_SOCK is provided by launchd, and probing arbitrary /tmp
+# sockets there can hang shell startup (and break VS Code env resolution).
+if [ "$(uname)" = "Linux" ] && [ -z "$SSH_AUTH_SOCK" ] \
+   && command -v ssh-add >/dev/null 2>&1; then
   for _sock in $(ls -1t /tmp 2>/dev/null); do
     _cand="/tmp/$_sock"
     [ -S "$_cand" ] || continue
-    if SSH_AUTH_SOCK="$_cand" ssh-add -l >/dev/null 2>&1; then
+    # Bound each probe so a non-agent socket can never block startup.
+    if SSH_AUTH_SOCK="$_cand" timeout 2 ssh-add -l >/dev/null 2>&1; then
       export SSH_AUTH_SOCK="$_cand"
       break
     fi
