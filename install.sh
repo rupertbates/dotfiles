@@ -58,4 +58,15 @@ done < "$DOTFILES/ssh/github_known_hosts"
 # included at the end of git/.gitconfig and is NOT part of this repo.
 link "$DOTFILES/git/.gitconfig" "$HOME/.gitconfig"
 
+# --- mise ----------------------------------------------------------------
+# Personal CLI tools I want available in every project/devcontainer,
+# without adding them to any individual repo's own (shared) mise config.
+# `mise use --global` writes to ~/.config/mise/config.toml, which mise
+# automatically merges with each project's local tool config.
+if command -v mise >/dev/null 2>&1; then
+  mise use --global duckdb@latest
+else
+  echo "mise not found; skipping personal global tool installs"
+fi
+
 echo "dotfiles install complete."
